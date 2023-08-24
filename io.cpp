@@ -12,8 +12,7 @@ void openDemo() {
     write(fw, s, strlen(s));
     close(fw);
 
-    char buf[1024];
-    memset(buf, NULL, sizeof buf);
+    char buf[1024] = {0};
     int fr = open(fileName, O_RDONLY, S_IRWXU);
     int cnt = read(fr, &buf, sizeof(buf));
     printf("read %d characters: %s\n", cnt, buf);
