@@ -3,6 +3,7 @@
 void forkDemo();
 void openDemo();
 void fopenDemo();
+void threadDemo();
 
 int main(int ac, char **av)
 {
@@ -11,6 +12,7 @@ int main(int ac, char **av)
     forkDemo();
     openDemo();
     fopenDemo();
+    threadDemo();
 
     return 0;
 }
