@@ -4,6 +4,8 @@ void forkDemo();
 void openDemo();
 void fopenDemo();
 void threadDemo();
+void lockDemo();
+void condDemo();
 
 int main(int ac, char **av)
 {
@@ -13,6 +15,8 @@ int main(int ac, char **av)
     openDemo();
     fopenDemo();
     threadDemo();
+    lockDemo();
+    condDemo();
 
     return 0;
 }
