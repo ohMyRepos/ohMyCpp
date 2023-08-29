@@ -34,8 +34,7 @@ void threadDemo() {
         c[i-startC] = i;
         pthread_create(&t[i-startC], NULL, printWorker, &c[offset]);
     }
-    for (char i = startC; i <= endC; i++)
-    {
+    for (char i = startC; i <= endC; i++) {
         pthread_join(t[i-startC], NULL);
     }
 }
@@ -43,7 +42,7 @@ void threadDemo() {
 typedef struct countStruct {
     pthread_mutex_t *lock;
     volatile int cnt;
-} countStruct;
+} countStruct_t;
 
 void *countWorkerNoLock(void *arg) {
     for (int i = 0; i < 1e7; i++) {
@@ -52,7 +51,7 @@ void *countWorkerNoLock(void *arg) {
 }
 
 void *countWorkerUseLock(void *arg) {
-    countStruct *cs = (countStruct *)arg;
+    countStruct_t *cs = (countStruct_t *)arg;
     pthread_mutex_t *lock = cs->lock;
     volatile int cnt = cs->cnt;
 
@@ -76,7 +75,7 @@ void lockDemo() {
 
     pthread_mutex_t lock;
     pthread_mutex_init(&lock, NULL);
-    countStruct cs = {
+    countStruct_t cs = {
         .lock = &lock,
         .cnt = 0,
     };
@@ -88,15 +87,14 @@ void lockDemo() {
     printf("use lock, expect cnt: %d, real cnt: %d, diff: %d\n", (int)2e7, cs.cnt, (int)2e7-cs.cnt);
 }
 
-typedef struct waitStruct
-{
+typedef struct waitStruct {
     pthread_mutex_t *lock;
     pthread_cond_t *cond;
     bool ready;
-} waitStruct;
+} waitStruct_t;
 
 void *waitWorker(void *arg) {
-    waitStruct *ws = (waitStruct *)arg;
+    waitStruct_t *ws = (waitStruct_t *)arg;
     pthread_mutex_t *lock = ws->lock;
     pthread_cond_t *cond = ws->cond;
 
@@ -114,7 +112,7 @@ void *waitWorker(void *arg) {
 }
 
 void *signalWorker(void *arg) {
-    waitStruct *ws = (waitStruct *)arg;
+    waitStruct_t *ws = (waitStruct_t *)arg;
     pthread_mutex_t *lock = ws->lock;
     pthread_cond_t *cond = ws->cond;
 
@@ -124,9 +122,9 @@ void *signalWorker(void *arg) {
     printf("before signal\n");
     pthread_cond_signal(cond);
     printf("after signal\n");
+    sleep(1);
+    printf("after sleep\n");
     pthread_mutex_unlock(lock);
-    printf("sleep in signalWorker\n");
-    sleep(0.5);
     printf("exit signalWorker\n");
 }
 
@@ -139,7 +137,7 @@ void condDemo() {
     pthread_cond_init(&cond, NULL);
 
     pthread_t t1, t2;
-    waitStruct ws = {
+    waitStruct_t ws = {
         .lock = &lock,
         .cond = &cond,
         .ready = false,
