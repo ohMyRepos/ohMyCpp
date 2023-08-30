@@ -7,6 +7,7 @@ void threadDemo();
 void lockDemo();
 void condDemo();
 void pNcDemo();
+void philosopherDemo();
 
 int main(int ac, char **av)
 {
@@ -18,7 +19,8 @@ int main(int ac, char **av)
     // threadDemo();
     // lockDemo();
     // condDemo();
-    pNcDemo();
+    // pNcDemo();
+    philosopherDemo();
 
-        return 0;
+    return 0;
 }
