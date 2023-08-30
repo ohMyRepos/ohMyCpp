@@ -60,11 +60,11 @@ void *produceWorker(void *arg) {
     int loops = ps->loops;
     char *name = ps->name;
     for(int i = 1; i <= loops; i++) {
-        Pthread_mutex_lock(&mutex);
         sem_wait(&empty_cond);
+        Pthread_mutex_lock(&mutex);
         put(i);
-        sem_post(&fill_cond);
         Pthread_mutex_unlock(&mutex);
+        sem_post(&fill_cond);
         printf("%s produced: %d\n", name, i);
     }
 }
@@ -74,11 +74,11 @@ void *consumeWorker(void *arg) {
     int loops = cs->loops;
     char *name = cs->name;
     for(int i = 1; i <= loops; i++) {
-        Pthread_mutex_lock(&mutex);
         sem_wait(&fill_cond);
+        Pthread_mutex_lock(&mutex);
         int tmp = get();
-        sem_post(&empty_cond);
         Pthread_mutex_unlock(&mutex);
+        sem_post(&empty_cond);
         printf("%s consumed: %d\n", name, tmp);
     }
 }
