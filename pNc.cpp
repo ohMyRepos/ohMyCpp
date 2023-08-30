@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <assert.h>
+#include <semaphore.h>
 
 void Pthread_mutex_lock(pthread_mutex_t *m) {
     int rc = pthread_mutex_lock(m);
@@ -42,7 +43,7 @@ int get() {
 }
 
 pthread_mutex_t mutex;
-pthread_cond_t empty_cond, fill_cond;
+sem_t empty_cond, fill_cond;
 
 typedef struct producerStruct {
     int loops;
@@ -60,11 +61,9 @@ void *produceWorker(void *arg) {
     char *name = ps->name;
     for(int i = 1; i <= loops; i++) {
         Pthread_mutex_lock(&mutex);
-        while(count == bufMAX) {
-            Pthread_cond_wait(&empty_cond, &mutex);
-        }
+        sem_wait(&empty_cond);
         put(i);
-        Pthread_cond_signal(&fill_cond);
+        sem_post(&fill_cond);
         Pthread_mutex_unlock(&mutex);
         printf("%s produced: %d\n", name, i);
     }
@@ -76,11 +75,9 @@ void *consumeWorker(void *arg) {
     char *name = cs->name;
     for(int i = 1; i <= loops; i++) {
         Pthread_mutex_lock(&mutex);
-        while(count == 0) {
-            Pthread_cond_wait(&fill_cond, &mutex);
-        }
+        sem_wait(&fill_cond);
         int tmp = get();
-        Pthread_cond_signal(&empty_cond);
+        sem_post(&empty_cond);
         Pthread_mutex_unlock(&mutex);
         printf("%s consumed: %d\n", name, tmp);
     }
@@ -90,8 +87,8 @@ void pNcDemo() {
     printf("producerConsumerDemo:\n");
 
     pthread_mutex_init(&mutex, NULL);
-    pthread_cond_init(&empty_cond, NULL);
-    pthread_cond_init(&fill_cond, NULL);
+    sem_init(&empty_cond, 0, bufMAX);
+    sem_init(&fill_cond, 0, bufMAX);
 
     pthread_t producer1, producer2;
     pthread_t consumer1, consumer2;
@@ -123,6 +120,6 @@ void pNcDemo() {
     pthread_join(consumer2, NULL);
 
     pthread_mutex_destroy(&mutex);
-    pthread_cond_destroy(&empty_cond);
-    pthread_cond_destroy(&fill_cond);
+    sem_destroy(&empty_cond);
+    sem_destroy(&fill_cond);
 }
