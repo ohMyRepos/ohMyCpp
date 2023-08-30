@@ -13,13 +13,13 @@ void Pthread_mutex_unlock(pthread_mutex_t *m) {
     assert(rc == 0);
 }
 
-void Pthread_cond_wait(pthread_cond_t *c, pthread_mutex_t *m) {
-    int rc = pthread_cond_wait(c, m);
+void Sem_wait(sem_t *s) {
+    int rc = sem_wait(s);
     assert(rc == 0);
 }
 
-void Pthread_cond_signal(pthread_cond_t *c) {
-    int rc = pthread_cond_signal(c);
+void Sem_post(sem_t *s) {
+    int rc = sem_post(s);
     assert(rc == 0);
 }
 
@@ -60,11 +60,11 @@ void *produceWorker(void *arg) {
     int loops = ps->loops;
     char *name = ps->name;
     for(int i = 1; i <= loops; i++) {
-        sem_wait(&empty_cond);
+        Sem_wait(&empty_cond);
         Pthread_mutex_lock(&mutex);
         put(i);
         Pthread_mutex_unlock(&mutex);
-        sem_post(&fill_cond);
+        Sem_post(&fill_cond);
         printf("%s produced: %d\n", name, i);
     }
 }
@@ -74,11 +74,11 @@ void *consumeWorker(void *arg) {
     int loops = cs->loops;
     char *name = cs->name;
     for(int i = 1; i <= loops; i++) {
-        sem_wait(&fill_cond);
+        Sem_wait(&fill_cond);
         Pthread_mutex_lock(&mutex);
         int tmp = get();
         Pthread_mutex_unlock(&mutex);
-        sem_post(&empty_cond);
+        Sem_post(&empty_cond);
         printf("%s consumed: %d\n", name, tmp);
     }
 }
