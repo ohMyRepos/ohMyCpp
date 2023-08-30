@@ -44,13 +44,20 @@ int get() {
 pthread_mutex_t mutex;
 pthread_cond_t empty_cond, fill_cond;
 
+typedef struct producerStruct {
+    int loops;
+    char *name;
+} producerStruct_t;
+
 typedef struct consumerStruct {
     int loops;
     char *name;
 } consumerStruct_t;
 
 void *produceWorker(void *arg) {
-    int loops = *((int *)arg);
+    producerStruct_t *ps = (producerStruct_t *)arg;
+    int loops = ps->loops;
+    char *name = ps->name;
     for(int i = 1; i <= loops; i++) {
         Pthread_mutex_lock(&mutex);
         while(count == bufMAX) {
@@ -59,7 +66,7 @@ void *produceWorker(void *arg) {
         put(i);
         Pthread_cond_signal(&fill_cond);
         Pthread_mutex_unlock(&mutex);
-        printf("produced: %d\n", i);
+        printf("%s produced: %d\n", name, i);
     }
 }
 
@@ -86,10 +93,18 @@ void pNcDemo() {
     pthread_cond_init(&empty_cond, NULL);
     pthread_cond_init(&fill_cond, NULL);
 
-    pthread_t producer;
+    pthread_t producer1, producer2;
     pthread_t consumer1, consumer2;
     int consumeLoops = 100;
-    int produceLoops = consumeLoops * 2;
+    int produceLoops = consumeLoops * 1;
+    producerStruct_t ps1 = {
+        .loops = produceLoops,
+        .name = "producer1",
+    };
+    producerStruct_t ps2 = {
+        .loops = produceLoops,
+        .name = "producer2",
+    };
     consumerStruct_t cs1 = {
         .loops = consumeLoops,
         .name = "consumer1",
@@ -98,10 +113,12 @@ void pNcDemo() {
         .loops = consumeLoops,
         .name = "consumer2",
     };
-    pthread_create(&producer, NULL, produceWorker, (void *)&produceLoops);
+    pthread_create(&producer1, NULL, produceWorker, (void *)&ps1);
+    pthread_create(&producer2, NULL, produceWorker, (void *)&ps2);
     pthread_create(&consumer1, NULL, consumeWorker, (void *)&cs1);
     pthread_create(&consumer2, NULL, consumeWorker, (void *)&cs2);
-    pthread_join(producer, NULL);
+    pthread_join(producer1, NULL);
+    pthread_join(producer2, NULL);
     pthread_join(consumer1, NULL);
     pthread_join(consumer2, NULL);
 
