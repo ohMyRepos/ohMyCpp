@@ -32,8 +32,15 @@ void eat(int id) {
 }
 
 void getforks(int id) {
-    int first = left(id);
-    int second = right(id);
+    int first;
+    int second;
+    if (id == 0) {
+        first = right(id);
+        second = left(id);
+    } else {
+        first = left(id);
+        second = right(id);
+    }
     printf("philosopher %d expect fork %d\n", id, first);
     sem_wait(&forks[first]);
     printf("philosopher %d got fork %d\n", id, first);
