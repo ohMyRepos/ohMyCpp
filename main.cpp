@@ -8,6 +8,7 @@ void lockDemo();
 void condDemo();
 void pNcDemo();
 void philosopherDemo();
+void shmDemo();
 
 int main(int ac, char **av)
 {
@@ -20,7 +21,8 @@ int main(int ac, char **av)
     // lockDemo();
     // condDemo();
     // pNcDemo();
-    philosopherDemo();
+    // philosopherDemo();
+    shmDemo();
 
     return 0;
 }

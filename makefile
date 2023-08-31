@@ -3,7 +3,7 @@ CFLAG=-w -g -m64
 LIBS=-lldap -lpthread -lrt -fno-builtin -llber
 CFLAG_DEBG=-g -m64 -L:./
 
-OBJS=main.o fork.o io.o thread.o pNc.o philosopher.o
+OBJS=main.o fork.o io.o thread.o pNc.o philosopher.o shm.o
 
 ALL: $(OBJS)
 	$(CC) $(CFLAG) -o ohMyCpp $(OBJS) $(LIBS)
