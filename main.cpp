@@ -8,10 +8,10 @@ void lockDemo();
 void condDemo();
 void pNcDemo();
 void philosopherDemo();
-void shmDemo();
+void shmMutexDemo();
+void shmSemphoreDemo();
 
-int main(int ac, char **av)
-{
+int main(int ac, char **av) {
     printf("From main.cpp!!!\n");
 
     // forkDemo();
@@ -22,7 +22,8 @@ int main(int ac, char **av)
     // condDemo();
     // pNcDemo();
     // philosopherDemo();
-    shmDemo();
+    shmMutexDemo();
+    shmSemphoreDemo();
 
     return 0;
 }

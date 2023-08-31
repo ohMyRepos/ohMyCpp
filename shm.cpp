@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/shm.h>
-#include <semaphore.h>
 #include <pthread.h>
+#include <semaphore.h>
+#include <sys/shm.h>
 #include <sys/wait.h>
 
 typedef struct ipcStruct {
@@ -19,8 +19,8 @@ void procWorker(ipcStruct_t *ipc, bool doLock) {
     }
 }
 
-void shmDemo() {
-    printf("shmDemo:\n");
+void shmMutexDemo() {
+    printf("shmMutexDemo:\n");
 
     int shmid = shmget(IPC_PRIVATE, sizeof(ipcStruct_t), IPC_CREAT | 0600);
     ipcStruct_t *ipc = (ipcStruct_t *)shmat(shmid, NULL, 0);
@@ -48,4 +48,30 @@ void shmDemo() {
 
     shmdt(ipc);
     shmctl(shmid, IPC_RMID, NULL);
+}
+
+void shmSemphoreDemo() {
+    printf("shmSemphoreDemo:\n");
+
+    int shmid = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | 0600);
+    sem_t *sem = (sem_t *)shmat(shmid, NULL, 0);
+    sem_init(sem, PTHREAD_PROCESS_SHARED, 0);
+
+    printf("parent start\n");
+
+    int pid = fork();
+    if (pid == 0) {
+        printf("child sleep start\n");
+        sleep(1);
+        printf("child sleep end\n");
+        sem_post(sem);
+        exit(0);
+    }
+
+    sem_wait(sem);
+
+    shmdt(sem);
+    shmctl(shmid, IPC_RMID, NULL);
+
+    printf("parent end\n");
 }
