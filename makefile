@@ -3,15 +3,24 @@ CFLAG=-w -g -m64
 LIBS=-lldap -lpthread -lrt -fno-builtin -llber
 CFLAG_DEBG=-g -m64 -L:./
 
-OBJS=main.o fork.o io.o thread.o pNc.o philosopher.o shm.o
+OBJECTS=main.o fork.o io.o thread.o pNc.o philosopher.o shm.o
 
-ALL: $(OBJS)
-	$(CC) $(CFLAG) -o ohMyCpp $(OBJS) $(LIBS)
+APPNAME=ohMyCpp
+
+VPATH=./src
+
+${APPNAME}: $(OBJECTS)
+	$(CC) $(CFLAG) -o ${APPNAME} $(OBJECTS) $(LIBS)
 debug:
-	$(CC) $(CFLAG_DEBG) -o ohMyCpp $(OBJS) $(LIBS)
+	$(CC) $(CFLAG_DEBG) -o ${APPNAME} $(OBJECTS) $(LIBS)
+
+# suffix rule
+.cpp.o:
+	$(CC) -c $(CFLAG) $< -o $@
+
+# static rule
+$(OBJECTS): %.o: %.cpp
+	$(CC) -c $(CFLAG) $< -o $@
 
 clean:
-	rm -rf *.o *.txt
-
-.cpp.o:
-	$(CC) $(CFLAG) -c $<
+	rm -rf *.o *.txt ${APPNAME}
