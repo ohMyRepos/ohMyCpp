@@ -10,6 +10,7 @@ void pNcDemo();
 void philosopherDemo();
 void shmMutexDemo();
 void shmSemphoreDemo();
+void daemonize();
 
 int main(int ac, char **av) {
     printf("From main.cpp!!!\n");
@@ -22,8 +23,10 @@ int main(int ac, char **av) {
     // condDemo();
     // pNcDemo();
     // philosopherDemo();
-    shmMutexDemo();
-    shmSemphoreDemo();
+    // shmMutexDemo();
+    // shmSemphoreDemo();
+    daemonize();
 
+    printf("End of main.cpp!!!\n");
     return 0;
 }

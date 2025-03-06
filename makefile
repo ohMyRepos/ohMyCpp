@@ -16,6 +16,7 @@ OBJDIR=objs
 # 目标对象文件列表（每个 .o 都存放在 $(OBJDIR) 目录下）
 OBJECTS=$(addprefix $(OBJDIR)/,\
 	main.o fork.o io.o thread.o pNc.o philosopher.o shm.o\
+	daemon.o\
 )
 
 # 生成目标程序
